@@ -7,12 +7,14 @@ public class BulletScript : MonoBehaviour
 
     private Rigidbody2D rigidbody2d;
     private Vector2 Direction;
+    private Animator animator;
 
     public float speed;
     // Start is called before the first frame update
     void Start()
     {
         rigidbody2d = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -24,5 +26,10 @@ public class BulletScript : MonoBehaviour
     public void SetDirection(Vector3 direction)
     {
         Direction = direction;
+    }
+
+    public void DestroyBullet()
+    {
+        Destroy(gameObject);
     }
 }

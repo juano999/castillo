@@ -5,6 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuHandler : MonoBehaviour
 {
+
+    public GameObject ChoosePnl;
+    public GameObject CreatePnl;
+    public GameObject JoinPnl;
+
     public void GoToCreateOrJoinScene()
     {
         SceneManager.LoadScene("CreateJoinScene", LoadSceneMode.Single);
@@ -30,5 +35,16 @@ public class MainMenuHandler : MonoBehaviour
     public void GoToCredits()
     {
         SceneManager.LoadScene("CreditsScene", LoadSceneMode.Single);
+    }
+
+    public void CreateGameClicked()
+    {
+        ChoosePnl.SetActive(false);
+        CreatePnl.SetActive(true);
+    }
+    public void JoinGameClicked()
+    {
+        ChoosePnl.SetActive(false);
+        JoinPnl.SetActive(true);
     }
 }

@@ -21,6 +21,9 @@ EditorBuildSettings:
     path: Assets/Scenes/JoinGameScene.unity
     guid: cd070a544e019504a960ee53a194c54e
   - enabled: 1
+    path: Assets/Scenes/CreditsScene.unity
+    guid: a4633d64d95b9bb48803e9a36c8b9537
+  - enabled: 1
     path: Assets/Scenes/FightScene.unity
     guid: 3fc8acdd13e6c734bafef6554d6fdbcd
   m_configObjects:

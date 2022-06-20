@@ -19,8 +19,11 @@ public class PlayerMovement : NetworkBehaviour
 
     Rigidbody2D Rigidbody2D;
     public Joystick joystick;
-    //public Button jumpBtn;
     public Button shootBtn;
+    public Button jumpBtn;
+    //private Joystick joystick;
+    //private Button shootBtn;
+    //private Button jumpBtn;
 
     private bool grounded;
     private Animator animator;
@@ -32,6 +35,7 @@ public class PlayerMovement : NetworkBehaviour
         animator = GetComponent<Animator>();
         //jumpBtn.onClick.AddListener(Jump);
         shootBtn.onClick.AddListener(Shoot);
+        jumpBtn.onClick.AddListener(Jump);
     }
 
     // Update is called once per frame

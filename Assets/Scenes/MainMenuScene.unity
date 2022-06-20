@@ -506,9 +506,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90af5f90bbafd834aaeb2d8fa7d1ef7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChoosePnl: {fileID: 0}
-  CreatePnl: {fileID: 0}
-  JoinPnl: {fileID: 0}
 --- !u!4 &375241302
 Transform:
   m_ObjectHideFlags: 0
@@ -1513,7 +1510,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 375241301}
         m_TargetAssemblyTypeName: MainMenuHandler, Assembly-CSharp
-        m_MethodName: GoToCreateOrJoinScene
+        m_MethodName: GoToFightScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

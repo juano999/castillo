@@ -6,9 +6,7 @@ using UnityEngine.SceneManagement;
 public class MainMenuHandler : MonoBehaviour
 {
 
-    public GameObject ChoosePnl;
-    public GameObject CreatePnl;
-    public GameObject JoinPnl;
+    
 
     public void GoToCreateOrJoinScene()
     {
@@ -20,15 +18,9 @@ public class MainMenuHandler : MonoBehaviour
         SceneManager.LoadScene("MainMenuScene", LoadSceneMode.Single);
     }
 
-    public void GoToCreateGame()
-    {
-        SceneManager.LoadScene("CreateGameScene", LoadSceneMode.Single);
-    }
-    public void GoToJoinGame()
-    {
-        SceneManager.LoadScene("JoinGameScene", LoadSceneMode.Single);
-    }
-    public void Play()
+    
+   
+    public void GoToFightScene()
     {
         SceneManager.LoadScene("FightScene", LoadSceneMode.Single);
     }
@@ -37,14 +29,5 @@ public class MainMenuHandler : MonoBehaviour
         SceneManager.LoadScene("CreditsScene", LoadSceneMode.Single);
     }
 
-    public void CreateGameClicked()
-    {
-        ChoosePnl.SetActive(false);
-        CreatePnl.SetActive(true);
-    }
-    public void JoinGameClicked()
-    {
-        ChoosePnl.SetActive(false);
-        JoinPnl.SetActive(true);
-    }
+    
 }

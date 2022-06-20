@@ -22,40 +22,46 @@ public class UIFightHandler : MonoBehaviour
 
     void Start()
     {
-        startHostButton?.onClick.AddListener(async () =>
+
+        var nm = new RelayManager();
+        startHostButton?.onClick.AddListener( () =>
         {
             // this allows the UnityMultiplayer and UnityMultiplayerRelay scene to work with and without
             // relay features - if the Unity transport is found and is relay protocol then we redirect all the 
             // traffic through the relay, else it just uses a LAN type (UNET) communication.
-            //if (RelayManager.Instance.IsRelayEnabled)
-            RelayManager.RelayHostData data = await RelayManager.HostGame(2);
+            //if (RelayManager.IsRelayEnabled)
+            //{
 
-            if (NetworkManager.Singleton.StartHost())
-            {
-                Debug.Log("Host started...");
-                joinCodeText.text = data.JoinCode;
-            }
-            else
-            {
-                Debug.Log("Unable to start host...");
-            }
+            //}
+                nm.ConfigureTransportAndStartNgoAsHost();
+
+            //if (NetworkManager.Singleton.StartHost())
+            //{
+            //    Debug.Log("Host started...");
+            //    //joinCodeText.text = data.JoinCode;
+            //}
+            //else
+            //{
+            //    Debug.Log("Unable to start host...");
+            //}
         });
 
 
-        startClientButton?.onClick.AddListener(async () =>
+        startClientButton?.onClick.AddListener( () =>
         {
             //if (RelayManager.Instance.IsRelayEnabled && !string.IsNullOrEmpty(joinCodeInput.text))
-            if (!string.IsNullOrEmpty(joinCodeInput.text))
-                await RelayManager.JoinGame(joinCodeInput.text);
+            //if (!string.IsNullOrEmpty(joinCodeInput.text))
+            //    await RelayManager.JoinGame(joinCodeInput.text);
 
-            if (NetworkManager.Singleton.StartClient())
-            {
+            //if (NetworkManager.Singleton.StartClient())
+            //{
 
-                Debug.Log("Client started...");
-                DisactivateOutGameUI();
-            }
-            else
-                Debug.Log("Unable to start client...");
+            //    Debug.Log("Client started...");
+            //    DisactivateOutGameUI();
+            //}
+            //else
+            //    Debug.Log("Unable to start client...");
+            nm.ConfigureTransportAndStartNgoAsConnectingPlayer();
         });
 
         playButton?.onClick.AddListener(() =>

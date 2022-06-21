@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -23,46 +24,44 @@ public class UIFightHandler : MonoBehaviour
     void Start()
     {
 
-        var nm = new RelayManager();
-        startHostButton?.onClick.AddListener( () =>
+
+        startHostButton?.onClick.AddListener(async () =>
         {
-            // this allows the UnityMultiplayer and UnityMultiplayerRelay scene to work with and without
-            // relay features - if the Unity transport is found and is relay protocol then we redirect all the 
-            // traffic through the relay, else it just uses a LAN type (UNET) communication.
-            //if (RelayManager.IsRelayEnabled)
-            //{
+            RelayManager.RelayHostData data = await RelayManager.AllocateRelayServerAndGetJoinCode(2);
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetHostRelayData(data.IPv4Address, data.Port, data.AllocationIDBytes, data.Key, data.ConnectionData, true);
+            if (NetworkManager.Singleton.StartHost())
+            {
+                Debug.Log("Host started...");
 
-            //}
-                nm.ConfigureTransportAndStartNgoAsHost();
-
-            //if (NetworkManager.Singleton.StartHost())
-            //{
-            //    Debug.Log("Host started...");
-            //    //joinCodeText.text = data.JoinCode;
-            //}
-            //else
-            //{
-            //    Debug.Log("Unable to start host...");
-            //}
+                joinCodeText.text = data.JoinCode;
+            }
+            else
+            {
+                Debug.Log("Unable to start host...");
+            }
         });
 
 
-        startClientButton?.onClick.AddListener( () =>
-        {
-            //if (RelayManager.Instance.IsRelayEnabled && !string.IsNullOrEmpty(joinCodeInput.text))
-            //if (!string.IsNullOrEmpty(joinCodeInput.text))
-            //    await RelayManager.JoinGame(joinCodeInput.text);
+        startClientButton?.onClick.AddListener(async () =>
+       {
+           if (!string.IsNullOrEmpty(joinCodeInput.text))
+           {
+               RelayManager.RelayJoinData data = await RelayManager.JoinRelayServerFromJoinCode(joinCodeInput.text);
+               NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData(data.IPv4Address, data.Port, data.AllocationIDBytes, data.Key, data.ConnectionData, data.HostConnectionData, true);
+           }
 
-            //if (NetworkManager.Singleton.StartClient())
-            //{
+           if (NetworkManager.Singleton.StartClient())
+           {
+               Debug.Log("Client started...");
+               DisactivateOutGameUI();
+           }
+           else
+               Debug.Log("Unable to start client...");
 
-            //    Debug.Log("Client started...");
-            //    DisactivateOutGameUI();
-            //}
-            //else
-            //    Debug.Log("Unable to start client...");
-            nm.ConfigureTransportAndStartNgoAsConnectingPlayer();
-        });
+
+
+           
+       });
 
         playButton?.onClick.AddListener(() =>
         {
@@ -70,7 +69,7 @@ public class UIFightHandler : MonoBehaviour
         });
     }
 
-    
+
 
     public void ActivateCreatePnl()
     {
@@ -89,7 +88,7 @@ public class UIFightHandler : MonoBehaviour
         JoinPnl.SetActive(false);
         CreatePnl.SetActive(false);
         ChoosePnl.SetActive(true);
-        
+
         Debug.Log("Desactivado: JoinPanel,CreatePanel ; Activado: ChoosePanel");
     }
 
@@ -101,12 +100,13 @@ public class UIFightHandler : MonoBehaviour
 
     public void BackButtonHandler()
     {
-        
-        if(ChoosePnl.activeSelf)
+
+        if (ChoosePnl.activeSelf)
         {
             Debug.Log("CAmbiando a Menu Principal");
             SceneManager.LoadScene("MainMenuScene", LoadSceneMode.Single);
-        } else if (JoinPnl.activeSelf || CreatePnl.activeSelf)
+        }
+        else if (JoinPnl.activeSelf || CreatePnl.activeSelf)
         {
             ActivateChoosePnl();
         }

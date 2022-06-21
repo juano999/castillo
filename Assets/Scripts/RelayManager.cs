@@ -52,7 +52,7 @@ public class RelayManager : MonoBehaviour
         public byte[] Key;
     }
 
-    public static async Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string joinCode)> AllocateRelayServerAndGetJoinCode(int maxConnections)
+    public static async Task<RelayHostData> AllocateRelayServerAndGetJoinCode(int maxConnections)
     {
         //Initialize the Unity Services engine
         await UnityServices.InitializeAsync();
@@ -82,6 +82,7 @@ public class RelayManager : MonoBehaviour
         try
         {
             createJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+            Debug.Log($"Codigo: { createJoinCode}");
         }
         catch
         {
@@ -91,49 +92,33 @@ public class RelayManager : MonoBehaviour
 
         var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == "dtls");
 
-        //RelayJoinData data = new RelayJoinData
-        //{
-        //    // WARNING allocation.RelayServer is deprecated. It's best to read from ServerEndpoints.
-        //    IPv4Address = allocation.RelayServer.IpV4,
-        //    Port = (ushort)allocation.RelayServer.Port,
+        RelayHostData data = new RelayHostData
+        {
+            // WARNING allocation.RelayServer is deprecated
+            JoinCode = createJoinCode,
+            IPv4Address = dtlsEndpoint.Host,
+            Port = (ushort)dtlsEndpoint.Port,
+            AllocationIDBytes = allocation.AllocationIdBytes,
+            ConnectionData = allocation.ConnectionData,
+            Key = allocation.Key,
+        };
 
-        //    AllocationID = allocation.AllocationId,
-        //    AllocationIDBytes = allocation.AllocationIdBytes,
-        //    ConnectionData = allocation.ConnectionData,
-        //    HostConnectionData = allocation.HostConnectionData,
-        //    Key = allocation.Key,
-        //};
-        //return data;
-        return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes, allocation.ConnectionData, allocation.Key, createJoinCode);
+        return data;
 
         
     }
 
-    public IEnumerator ConfigureTransportAndStartNgoAsHost()
+    public static async Task<RelayJoinData> JoinRelayServerFromJoinCode(string joinCode)
     {
-        var serverRelayUtilityTask = AllocateRelayServerAndGetJoinCode(m_MaxConnections);
-        while (!serverRelayUtilityTask.IsCompleted)
+
+        //Initialize the Unity Services engine
+        await UnityServices.InitializeAsync();
+        //Always authenticate your users beforehand
+        if (!AuthenticationService.Instance.IsSignedIn)
         {
-            yield return null;
+            //If not already logged, log the user in
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
-        if (serverRelayUtilityTask.IsFaulted)
-        {
-            Debug.LogError("Exception thrown when attempting to start Relay Server. Server not started. Exception: " + serverRelayUtilityTask.Exception.Message);
-            yield break;
-        }
-
-        var (ipv4address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
-
-        // Display the join code to the user.
-
-        // The .GetComponent method returns a UTP NetworkDriver (or a proxy to it)
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetHostRelayData(ipv4address, port, allocationIdBytes, key, connectionData, true);
-        NetworkManager.Singleton.StartHost();
-        yield return null;
-    }
-
-    public static async Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] hostConnectionData, byte[] key)> JoinRelayServerFromJoinCode(string joinCode)
-    {
         JoinAllocation allocation;
         try
         {
@@ -150,30 +135,21 @@ public class RelayManager : MonoBehaviour
         Debug.Log($"client: {allocation.AllocationId}");
 
         var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == "dtls");
-        return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes, allocation.ConnectionData, allocation.HostConnectionData, allocation.Key);
+
+        RelayJoinData data = new RelayJoinData
+        {
+            // WARNING allocation.RelayServer is deprecated. It's best to read from ServerEndpoints.
+            IPv4Address = dtlsEndpoint.Host,
+            Port = (ushort)dtlsEndpoint.Port,
+            AllocationID = allocation.AllocationId,
+            AllocationIDBytes = allocation.AllocationIdBytes,
+            ConnectionData = allocation.ConnectionData,
+            HostConnectionData = allocation.HostConnectionData,
+            Key = allocation.Key,
+        };
+
+        return data;
     }
 
-    public IEnumerator ConfigureTransportAndStartNgoAsConnectingPlayer()
-    {
-        // Populate RelayJoinCode beforehand through the UI
-        var clientRelayUtilityTask = JoinRelayServerFromJoinCode(RelayJoinCode);
-
-        while (!clientRelayUtilityTask.IsCompleted)
-        {
-            yield return null;
-        }
-
-        if (clientRelayUtilityTask.IsFaulted)
-        {
-            Debug.LogError("Exception thrown when attempting to connect to Relay Server. Exception: " + clientRelayUtilityTask.Exception.Message);
-            yield break;
-        }
-
-        var (ipv4address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
-
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData(ipv4address, port, allocationIdBytes, key, connectionData, hostConnectionData, true);
-
-        NetworkManager.Singleton.StartClient();
-        yield return null;
-    }
+ 
 }

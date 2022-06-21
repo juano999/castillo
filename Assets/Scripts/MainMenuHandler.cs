@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuHandler : MonoBehaviour
 {
+
+    
+
     public void GoToCreateOrJoinScene()
     {
         SceneManager.LoadScene("CreateJoinScene", LoadSceneMode.Single);
@@ -15,15 +18,9 @@ public class MainMenuHandler : MonoBehaviour
         SceneManager.LoadScene("MainMenuScene", LoadSceneMode.Single);
     }
 
-    public void GoToCreateGame()
-    {
-        SceneManager.LoadScene("CreateGameScene", LoadSceneMode.Single);
-    }
-    public void GoToJoinGame()
-    {
-        SceneManager.LoadScene("JoinGameScene", LoadSceneMode.Single);
-    }
-    public void Play()
+    
+   
+    public void GoToFightScene()
     {
         SceneManager.LoadScene("FightScene", LoadSceneMode.Single);
     }
@@ -31,4 +28,6 @@ public class MainMenuHandler : MonoBehaviour
     {
         SceneManager.LoadScene("CreditsScene", LoadSceneMode.Single);
     }
+
+    
 }

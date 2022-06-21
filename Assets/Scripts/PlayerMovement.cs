@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Netcode;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 
 {
 
@@ -16,10 +17,13 @@ public class PlayerMovement : MonoBehaviour
     public float runSpeed = 2;
     //public float jumpForce;
 
-    Rigidbody2D rigidbody2D;
+    Rigidbody2D Rigidbody2D;
     public Joystick joystick;
-    //public Button jumpBtn;
     public Button shootBtn;
+    public Button jumpBtn;
+    //private Joystick joystick;
+    //private Button shootBtn;
+    //private Button jumpBtn;
 
     private bool grounded;
     private Animator animator;
@@ -27,16 +31,17 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rigidbody2D = GetComponent<Rigidbody2D>();
+        Rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         //jumpBtn.onClick.AddListener(Jump);
         shootBtn.onClick.AddListener(Shoot);
+        jumpBtn.onClick.AddListener(Jump);
     }
 
     // Update is called once per frame
     void Update()
     {
-        //verticalMove = joystick.Vertical * runSpeedVertical;
+        
         //Movimiento horizontal
         horizontalMove = joystick.Horizontal * runSpeedHorizontal;
         transform.position += new Vector3(horizontalMove, verticalMove , 0) * Time.deltaTime * runSpeed;
@@ -81,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
         //}
         if (grounded)
         {
-        rigidbody2D.velocity = Vector2.up * runSpeedVertical;
+        Rigidbody2D.velocity = Vector2.up * runSpeedVertical;
         }
 
         

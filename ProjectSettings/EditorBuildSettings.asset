@@ -11,17 +11,22 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainMenuScene.unity
     guid: 8dbd57b738368794eac41035d6c4b066
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/CreateJoinScene.unity
     guid: f1ce1629d8d76d240ad0b3661c2cb5f2
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Scenes/CreateGameScene.unity
-    guid: b5490eb2d7484ca42b9869172370ccc7
-  - enabled: 1
-    path: Assets/Scenes/JoinGameScene.unity
-    guid: cd070a544e019504a960ee53a194c54e
+    path: Assets/Scenes/CreditsScene.unity
+    guid: a4633d64d95b9bb48803e9a36c8b9537
   - enabled: 1
     path: Assets/Scenes/FightScene.unity
     guid: 3fc8acdd13e6c734bafef6554d6fdbcd
   m_configObjects:
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: eaeed47bf0142c14a8be20773d912470, type: 2}
+    com.unity.adaptiveperformance.samsung.android.provider_settings: {fileID: 11400000, guid: 0e4391a30c9e3854b825c58cb061b9a7, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 32a44eb7988daa146b890e5f09961176, type: 2}

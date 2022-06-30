@@ -20,7 +20,8 @@ public class BulletScript : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
-        rigidbody2d.velocity = Direction * speed;
+        //rigidbody2d.velocity = Direction * speed;
+        //Debug.Log("velocity: "+ rigidbody2d.velocity);
     }
 
     public void SetDirection(Vector3 direction)

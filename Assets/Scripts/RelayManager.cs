@@ -18,8 +18,7 @@ using System.Linq;
 
 public class RelayManager : MonoBehaviour
 {
-    [SerializeField]
-    private string environment = "production";
+   
 
     [SerializeField]
     const int m_MaxConnections = 2;

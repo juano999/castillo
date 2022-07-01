@@ -34,7 +34,8 @@ public class PlayerShooting : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        if (_lastFired + _cooldown < Time.time)
+        //if (_lastFired + _cooldown < Time.time && _projectileCount > 0)
+        if (_projectileCount > 0)
         {
             _lastFired = Time.time;
             Vector3 dir;           
@@ -47,10 +48,19 @@ public class PlayerShooting : NetworkBehaviour
 
             // Fire locally immediately
             ExecuteShoot(dir);
-            
+            --_projectileCount;
+        }
+        if(_projectileCount == 0)
+        {
+            Debug.Log("recargando balas.. Espera 5 segundos");
+            Invoke(nameof(ReloadProjectiles), 5);
         }
     }
 
+    public void ReloadProjectiles()
+    {
+        _projectileCount = 100;
+    }
 
     [ServerRpc]
     private void RequestFireServerRpc(Vector3 dir)

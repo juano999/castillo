@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
 using Unity.Collections;
+using TMPro;
 
 public class PlayerMovement : NetworkBehaviour
 
@@ -11,9 +12,10 @@ public class PlayerMovement : NetworkBehaviour
 
     public NetworkVariable<FixedString64Bytes> PlayerName = new NetworkVariable<FixedString64Bytes>();
     
-    public NetworkVariable<int> Health = new NetworkVariable<int>(100);
+    [SerializeField]
+    public NetworkVariable<int> Health = new NetworkVariable<int>(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
-    
+    public TMP_Text TotalLifeText;
     public GameObject InGamePanel;
     float horizontalMove = 0;
     float verticalMove = 0;
@@ -44,14 +46,14 @@ public class PlayerMovement : NetworkBehaviour
         {
             InGamePanel.SetActive(false);
         }
-        Health.Value = 100;
+        
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!IsOwner) Destroy(this);
+        //if (!IsOwner) Destroy(this);
         if (IsOwner)
         {
 
@@ -89,7 +91,46 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    
+    public void Hit()
+    {
+        //Debug.Log("isOwner"+ IsOwner);
+        //Health.Value = Health.Value - 1;
+        //TotalLifeText.text = $"{Health.Value} /100";
+        if(IsOwner)
+        {
+            Debug.Log("Proyectil Impactado");
+            TotalLifeText.text = $"{Health.Value}/100";
+        } else
+        {
+            RequestTakeDamageServerRpc();
+            TotalLifeText.text = $"{Health.Value}/100";
+        }
 
-   
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestTakeDamageServerRpc()
+    {
+        Debug.Log("Server?" + IsServer);
+        TakeDamageClientRpc();
+    }
+
+    [ClientRpc]
+    private void TakeDamageClientRpc()
+    {
+        if(IsOwner)
+        {
+            Health.Value--;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log("objeto collision" + collision.gameObject.name);
+    }
+
+
+
+
+
 }

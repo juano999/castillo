@@ -4,6 +4,7 @@ public class Projectile : MonoBehaviour
 {
     private Rigidbody2D rb2d;
     private Vector3 _dir;
+    PlayerMovement player;
 
     public void Init(Vector3 dir)
     {
@@ -20,5 +21,16 @@ public class Projectile : MonoBehaviour
 
         //Instantiate(_particles, transform.position, Quaternion.identity);
         Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        PlayerMovement player = collision.gameObject.GetComponent<PlayerMovement>();
+        Debug.Log("player collision" + collision.gameObject.name);
+        if (player != null)
+        {
+            player.Hit();
+        }
+        DestroyBall();
     }
 }

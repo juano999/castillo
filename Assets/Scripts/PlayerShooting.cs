@@ -10,12 +10,12 @@ public class PlayerShooting : NetworkBehaviour
     [SerializeField] private Transform _spawner;
     [SerializeField] private float _projectileSpeed = 50;
     [SerializeField] private float _cooldown = 0.5f;
+    [SerializeField] private int _projectileCount = 100;
 
-    
     private float _lastFired = float.MinValue;
     private bool _fired;
 
-    public GameObject BulletPrefab;
+    
 
     public override void OnNetworkSpawn()
     {
@@ -37,7 +37,9 @@ public class PlayerShooting : NetworkBehaviour
         if (_lastFired + _cooldown < Time.time)
         {
             _lastFired = Time.time;
-            var dir = transform.right;
+            Vector3 dir;           
+            if (transform.localScale.x > 0.0f) dir = Vector3.right;
+            else dir = Vector3.left;
             Debug.Log("dir: " + dir);
 
             // Send off the request to be executed on all clients
@@ -70,14 +72,14 @@ public class PlayerShooting : NetworkBehaviour
     }
 
 
-    private void Shoot()
-    {
-        Vector3 direction;
-        if (transform.localScale.x > 0.0f) direction = Vector2.right;
-        else direction = Vector3.left;
+    //private void Shoot()
+    //{
+    //    Vector3 direction;
+    //    if (transform.localScale.x > 0.0f) direction = Vector2.right;
+    //    else direction = Vector3.left;
 
-        GameObject bullet = Instantiate(BulletPrefab, transform.position + direction * 0.1f, Quaternion.identity);
-        bullet.GetComponent<BulletScript>().SetDirection(direction);
+    //    GameObject bullet = Instantiate(BulletPrefab, transform.position + direction * 0.1f, Quaternion.identity);
+    //    bullet.GetComponent<BulletScript>().SetDirection(direction);
 
-    }
+    //}
 }

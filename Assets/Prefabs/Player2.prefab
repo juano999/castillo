@@ -113,7 +113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -1191,6 +1191,7 @@ MonoBehaviour:
   _spawner: {fileID: 749218394286087237}
   _projectileSpeed: 700
   _cooldown: 0.01
+  _projectileCount: 100
 --- !u!114 &-7823711591618677169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1223,7 +1224,7 @@ MonoBehaviour:
   SyncRotAngleY: 0
   SyncRotAngleZ: 0
   SyncScaleX: 1
-  SyncScaleY: 0
+  SyncScaleY: 1
   SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01

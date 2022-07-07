@@ -9,13 +9,14 @@ using TMPro;
 public class PlayerMovement : NetworkBehaviour
 
 {
-    [SerializeField]
-    public const int MAX_HEALTH = 20;
+
 
     public NetworkVariable<FixedString64Bytes> PlayerName = new NetworkVariable<FixedString64Bytes>();
 
     [SerializeField]
-    public NetworkVariable<int> Health = new NetworkVariable<int>(MAX_HEALTH, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    public NetworkVariable<int> Health = new NetworkVariable<int>(20, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField]
+    public NetworkVariable<bool> IsDead = new NetworkVariable<bool>(false,NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     public TMP_Text TotalLifeText;
     public GameObject InGamePanel;
@@ -79,27 +80,32 @@ public class PlayerMovement : NetworkBehaviour
 
             //Debug.Log(transform.position);
 
-            if (Health.Value == 0) Invoke(nameof(Respawn), 3);
 
+
+            if (Health.Value == 0)
+            {
+                IsDead.Value = true;
+                Invoke(nameof(Respawn), 3);
+            }
 
         }
 
-        //Desactivar al jugador - Ilusion de que muere
-        if (Health.Value > 0) gameObject.SetActive(true);
-        else gameObject.SetActive(false);
+
+
 
 
     }
 
     public void Respawn()
     {
-        Health.Value = MAX_HEALTH;
+
+        Health.Value = 20;
         Vector3 refPosition;
         if (gameObject.name == "Player1(Clone)")
         {
 
             refPosition = GameObject.Find("Player2(Clone)").transform.position;
-            Debug.Log(" player1: " + GameObject.Find("Player1(Clone)").name);
+            Debug.Log(" player1: " + GameObject.Find("Player2(Clone)").name);
         }
         else if (gameObject.name == "Player2(Clone)")
         {
@@ -110,11 +116,30 @@ public class PlayerMovement : NetworkBehaviour
         {
             refPosition = new Vector3(0, 0, 0);
         }
-        Debug.Log("refPosition: " + refPosition);
+
         transform.position = new Vector3(0, refPosition.y, 0);
+        IsDead.Value = false;
+       
 
     }
 
+    public override void OnNetworkSpawn()
+    {
+        IsDead.OnValueChanged += IsDeadChanged;
+    }
+
+
+    public void IsDeadChanged(bool previous, bool current)
+    {
+        if (IsDead.Value)
+        {
+            gameObject.SetActive(false);
+            //Funcion para que se desactiven las doors
+        } else
+        {
+            gameObject.SetActive(true);
+        }
+    }
     public void Jump()
     {
         if (grounded)
@@ -125,41 +150,26 @@ public class PlayerMovement : NetworkBehaviour
 
     public void Hit()
     {
-        //Debug.Log("isOwner"+ IsOwner);
-        //Health.Value = Health.Value - 1;
-        //TotalLifeText.text = $"{Health.Value} /100";
-        if (IsOwner)
-        {
-            Debug.Log("Proyectil Impactado");
-            //TotalLifeText.text = $"{Health.Value}/100";
-        }
-        else
-        {
-            RequestTakeDamageServerRpc();
-            //TotalLifeText.text = $"{Health.Value}/100";
-        }
-
+        if (!IsOwner) RequestTakeDamageServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void RequestTakeDamageServerRpc()
     {
-        Debug.Log("Server?" + IsServer);
         TakeDamageClientRpc();
     }
 
     [ClientRpc]
     private void TakeDamageClientRpc()
     {
-        if (IsOwner)
-        {
-            Health.Value--;
-        }
+        if (IsOwner) Health.Value--;
     }
+
+    
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("objeto collision" + collision.gameObject.name);
+        //Debug.Log("objeto collision" + collision.gameObject.name);
     }
 
 

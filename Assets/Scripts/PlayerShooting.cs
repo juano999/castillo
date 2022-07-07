@@ -10,7 +10,7 @@ public class PlayerShooting : NetworkBehaviour
     [SerializeField] private Transform _spawner;
     [SerializeField] private float _projectileSpeed = 50;
     [SerializeField] private float _cooldown = 0.5f;
-    [SerializeField] private int _projectileCount = 100;
+    [SerializeField] private int _projectileCount = 25;
 
     private float _lastFired = float.MinValue;
     private bool _fired;
@@ -41,7 +41,7 @@ public class PlayerShooting : NetworkBehaviour
             Vector3 dir;           
             if (transform.localScale.x > 0.0f) dir = Vector3.right;
             else dir = Vector3.left;
-            Debug.Log("dir: " + dir);
+            
 
             // Send off the request to be executed on all clients
             RequestFireServerRpc(dir);
@@ -59,7 +59,7 @@ public class PlayerShooting : NetworkBehaviour
 
     public void ReloadProjectiles()
     {
-        _projectileCount = 100;
+        _projectileCount = 25;
     }
 
     [ServerRpc]

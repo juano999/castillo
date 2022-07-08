@@ -9,13 +9,13 @@ public class PlayerShooting : NetworkBehaviour
     [SerializeField] private Button shootBtn;
     [SerializeField] private Transform _spawner;
     [SerializeField] private float _projectileSpeed = 50;
-    [SerializeField] private float _cooldown = 0.5f;
+    //[SerializeField] private float _cooldown = 0.5f;
+    [SerializeField] private int _projectileCount = 25;
 
-    
     private float _lastFired = float.MinValue;
     private bool _fired;
 
-    public GameObject BulletPrefab;
+    
 
     public override void OnNetworkSpawn()
     {
@@ -34,21 +34,33 @@ public class PlayerShooting : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        if (_lastFired + _cooldown < Time.time)
+        //if (_lastFired + _cooldown < Time.time && _projectileCount > 0)
+        if (_projectileCount > 0)
         {
             _lastFired = Time.time;
-            var dir = transform.right;
-            Debug.Log("dir: " + dir);
+            Vector3 dir;           
+            if (transform.localScale.x > 0.0f) dir = Vector3.right;
+            else dir = Vector3.left;
+            
 
             // Send off the request to be executed on all clients
             RequestFireServerRpc(dir);
 
             // Fire locally immediately
             ExecuteShoot(dir);
-            
+            --_projectileCount;
+        }
+        if(_projectileCount == 0)
+        {
+            Debug.Log("recargando balas.. Espera 5 segundos");
+            Invoke(nameof(ReloadProjectiles), 5);
         }
     }
 
+    public void ReloadProjectiles()
+    {
+        _projectileCount = 25;
+    }
 
     [ServerRpc]
     private void RequestFireServerRpc(Vector3 dir)
@@ -70,14 +82,14 @@ public class PlayerShooting : NetworkBehaviour
     }
 
 
-    private void Shoot()
-    {
-        Vector3 direction;
-        if (transform.localScale.x > 0.0f) direction = Vector2.right;
-        else direction = Vector3.left;
+    //private void Shoot()
+    //{
+    //    Vector3 direction;
+    //    if (transform.localScale.x > 0.0f) direction = Vector2.right;
+    //    else direction = Vector3.left;
 
-        GameObject bullet = Instantiate(BulletPrefab, transform.position + direction * 0.1f, Quaternion.identity);
-        bullet.GetComponent<BulletScript>().SetDirection(direction);
+    //    GameObject bullet = Instantiate(BulletPrefab, transform.position + direction * 0.1f, Quaternion.identity);
+    //    bullet.GetComponent<BulletScript>().SetDirection(direction);
 
-    }
+    //}
 }

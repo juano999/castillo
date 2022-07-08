@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 812651824915441568}
   - component: {fileID: 812651824915441571}
   - component: {fileID: 4435145285887027102}
-  - component: {fileID: 3410389526203721993}
   - component: {fileID: -6975240171170955898}
   m_Layer: 0
   m_Name: Bullet
@@ -141,7 +140,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: -0.18089372}
@@ -163,19 +162,6 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &3410389526203721993
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 812651824915441566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd7c457e2f797e4aa5b5029632584ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 10
 --- !u!114 &-6975240171170955898
 MonoBehaviour:
   m_ObjectHideFlags: 0

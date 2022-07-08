@@ -61,7 +61,7 @@ public class UIFightHandler : MonoBehaviour
 
 
 
-           
+
        });
 
         playButton?.onClick.AddListener(() =>
@@ -127,20 +127,22 @@ public class UIFightHandler : MonoBehaviour
         response.CreatePlayerObject = true;
 
         // The prefab hash value of the NetworkPrefab, if null the default NetworkManager player prefab is used
-        response.PlayerPrefabHash = null;
-        
+
+
         Debug.Log("ClientID" + clientId);
         Debug.Log("connectionData" + connectionData);
 
         // Position to spawn the player object (if null it uses default of Vector3.zero)
-        if( clientId > 0)
+        if (clientId > 0)
         {
-        response.Position = new Vector3(5.00f, 0.20f, 0);
-
-        } else
+            response.Position = new Vector3(4.00f, 0.20f, 0);
+            response.PlayerPrefabHash = 2;
+           
+        }
+        else
         {
-
-        response.Position = new Vector3(-7.00f, 0.20f, 0);
+            response.PlayerPrefabHash = null;
+            response.Position = new Vector3(-4.00f, 0.20f, 0);
         }
 
         // Rotation to spawn the player object (if null it uses the default of Quaternion.identity)

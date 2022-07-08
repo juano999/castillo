@@ -4,16 +4,21 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
 using Unity.Collections;
+using TMPro;
+using System;
 
 public class PlayerMovement : NetworkBehaviour
 
 {
-
+    public MatchManagerScript matchManager;
     public NetworkVariable<FixedString64Bytes> PlayerName = new NetworkVariable<FixedString64Bytes>();
-    
-    public NetworkVariable<int> Health = new NetworkVariable<int>(100);
 
-    
+    [SerializeField]
+    public NetworkVariable<int> Health = new NetworkVariable<int>(20, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField]
+    public NetworkVariable<bool> IsDead = new NetworkVariable<bool>(false,NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+    public TMP_Text TotalLifeText;
     public GameObject InGamePanel;
     float horizontalMove = 0;
     float verticalMove = 0;
@@ -21,13 +26,12 @@ public class PlayerMovement : NetworkBehaviour
     public float runSpeedHorizontal = 3;
     public float runSpeedVertical = 3;
     public float runSpeed = 2;
-    
+
+
 
     Rigidbody2D Rigidbody2D;
     public Joystick joystick;
-    
     public Button jumpBtn;
-    
 
     private bool grounded;
     private Animator animator;
@@ -37,25 +41,22 @@ public class PlayerMovement : NetworkBehaviour
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        
-        
-        jumpBtn.onClick.AddListener(Jump);
-        if(!IsOwner)
-        {
-            InGamePanel.SetActive(false);
-        }
-        Health.Value = 100;
 
+        jumpBtn.onClick.AddListener(Jump);
+
+        if (!IsOwner) InGamePanel.SetActive(false);
+
+        TotalLifeText.text = "100/100";
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!IsOwner) Destroy(this);
+        //if (!IsOwner) Destroy(this);
+        TotalLifeText.text = $"{Health.Value}/100";
+
         if (IsOwner)
         {
-
-
             //Movimiento horizontal
             horizontalMove = joystick.Horizontal * runSpeedHorizontal;
             transform.position += new Vector3(horizontalMove, verticalMove, 0) * Time.deltaTime * runSpeed;
@@ -76,20 +77,105 @@ public class PlayerMovement : NetworkBehaviour
             else grounded = false;
 
             //Debug.Log(transform.position);
-            
+
+
+
+            if (Health.Value == 0)
+            {
+                IsDead.Value = true;
+                Invoke(nameof(Respawn), 3);
+            }
+
         }
+
+
+
+
 
     }
 
+    public void Respawn()
+    {
+
+        Health.Value = 20;
+        Vector3 refPosition;
+        if (gameObject.name == "Player1(Clone)")
+        {
+
+            refPosition = GameObject.Find("Player2(Clone)").transform.position;
+            Debug.Log(" player1: " + GameObject.Find("Player2(Clone)").name);
+        }
+        else if (gameObject.name == "Player2(Clone)")
+        {
+            refPosition = GameObject.Find("Player1(Clone)").transform.position;
+            Debug.Log(" player1: " + GameObject.Find("Player1(Clone)").name);
+        }
+        else
+        {
+            refPosition = new Vector3(0, 0, 0);
+        }
+
+        transform.position = new Vector3(0, refPosition.y, 0);
+        IsDead.Value = false;
+       
+
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        IsDead.OnValueChanged += IsDeadChanged;
+        matchManager = GameObject.Find("MatchManager").GetComponent<MatchManagerScript>();
+    }
+
+
+    public void IsDeadChanged(bool previous, bool current)
+    {
+        if (IsDead.Value)
+        {
+            gameObject.SetActive(false);
+            
+            Debug.Log("Ha muerto el jugador: " + OwnerClientId);
+            matchManager.ChangePlayerWithAdvantageServerRpc(Convert.ToInt32(OwnerClientId));
+            
+        } else
+        {
+            gameObject.SetActive(true);
+        }
+    }
     public void Jump()
-    {  
+    {
         if (grounded)
         {
             Rigidbody2D.velocity = Vector2.up * runSpeedVertical;
         }
     }
 
+    public void Hit()
+    {
+        if (!IsOwner) RequestTakeDamageServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestTakeDamageServerRpc()
+    {
+        TakeDamageClientRpc();
+    }
+
+    [ClientRpc]
+    private void TakeDamageClientRpc()
+    {
+        if (IsOwner) Health.Value--;
+    }
+
     
 
-   
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //Debug.Log("objeto collision" + collision.gameObject.name);
+    }
+
+
+
+
+
 }

@@ -5,12 +5,12 @@ using UnityEngine.UI;
 using Unity.Netcode;
 using Unity.Collections;
 using TMPro;
+using System;
 
 public class PlayerMovement : NetworkBehaviour
 
 {
-
-
+    public MatchManagerScript matchManager;
     public NetworkVariable<FixedString64Bytes> PlayerName = new NetworkVariable<FixedString64Bytes>();
 
     [SerializeField]
@@ -31,9 +31,7 @@ public class PlayerMovement : NetworkBehaviour
 
     Rigidbody2D Rigidbody2D;
     public Joystick joystick;
-
     public Button jumpBtn;
-
 
     private bool grounded;
     private Animator animator;
@@ -126,6 +124,7 @@ public class PlayerMovement : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         IsDead.OnValueChanged += IsDeadChanged;
+        matchManager = GameObject.Find("MatchManager").GetComponent<MatchManagerScript>();
     }
 
 
@@ -134,7 +133,10 @@ public class PlayerMovement : NetworkBehaviour
         if (IsDead.Value)
         {
             gameObject.SetActive(false);
-            //Funcion para que se desactiven las doors
+            
+            Debug.Log("Ha muerto el jugador: " + OwnerClientId);
+            matchManager.ChangePlayerWithAdvantageServerRpc(Convert.ToInt32(OwnerClientId));
+            
         } else
         {
             gameObject.SetActive(true);

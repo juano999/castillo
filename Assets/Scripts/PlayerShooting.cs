@@ -9,7 +9,7 @@ public class PlayerShooting : NetworkBehaviour
     [SerializeField] private Button shootBtn;
     [SerializeField] private Transform _spawner;
     [SerializeField] private float _projectileSpeed = 50;
-    [SerializeField] private float _cooldown = 0.5f;
+    //[SerializeField] private float _cooldown = 0.5f;
     [SerializeField] private int _projectileCount = 25;
 
     private float _lastFired = float.MinValue;

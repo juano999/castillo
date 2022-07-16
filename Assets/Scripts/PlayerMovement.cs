@@ -103,15 +103,16 @@ public class PlayerMovement : NetworkBehaviour
         {
 
             refPosition = GameObject.Find("Player2(Clone)").transform.position;
-            Debug.Log(" player1: " + GameObject.Find("Player2(Clone)").name);
+            
         }
         else if (gameObject.name == "Player2(Clone)")
         {
             refPosition = GameObject.Find("Player1(Clone)").transform.position;
-            Debug.Log(" player1: " + GameObject.Find("Player1(Clone)").name);
+            
         }
         else
         {
+            Debug.Log("No se encontro ningun player");
             refPosition = new Vector3(0, 0, 0);
         }
 
@@ -134,7 +135,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             gameObject.SetActive(false);
             
-            Debug.Log("Ha muerto el jugador: " + OwnerClientId);
+            Debug.Log("Ha muerto el jugador: " + OwnerClientId+1);
             matchManager.ChangePlayerWithAdvantageServerRpc(Convert.ToInt32(OwnerClientId));
             
         } else

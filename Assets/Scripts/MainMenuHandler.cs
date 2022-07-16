@@ -18,7 +18,10 @@ public class MainMenuHandler : MonoBehaviour
         SceneManager.LoadScene("MainMenuScene", LoadSceneMode.Single);
     }
 
-    
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
    
     public void GoToFightScene()
     {

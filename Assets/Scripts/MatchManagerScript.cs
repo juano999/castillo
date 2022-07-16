@@ -14,7 +14,8 @@ public class MatchManagerScript : NetworkBehaviour
     public GameObject DoorRight;
     public GameObject GoAheadBlue;
     public GameObject GoAheadRed;
-    
+    public GameObject BlueWinnerUI;
+    public GameObject RedWinnerUI;
 
     private Vector3[,] spawnPositions =
     {
@@ -36,7 +37,6 @@ public class MatchManagerScript : NetworkBehaviour
         FloorLevel.OnValueChanged += OnFloorLevelChange;
         PlayerWithAdvantage.OnValueChanged += PlayerWithAdvantageChanged;
 
-
     }
 
     // Update is called once per frame
@@ -51,6 +51,7 @@ public class MatchManagerScript : NetworkBehaviour
         GameObject player2 = GameObject.Find("Player2(Clone)");
         if(player1==null || player2==null)
         {
+            Debug.Log("Algun player es null");
             return;
         }
         switch (current)
@@ -71,12 +72,12 @@ public class MatchManagerScript : NetworkBehaviour
                 player2.transform.position = spawnPositions[2, 1];
                 break;
             case 2:
-                cam.transform.position = new Vector3(0, 5.94f, -9);
+                cam.transform.position = new Vector3(0, 5.23f, -9);
                 player1.transform.position = spawnPositions[3, 0];
                 player2.transform.position = spawnPositions[3, 1];
                 break;
             case -2:
-                cam.transform.position = new Vector3(0, -5.24f, -9);
+                cam.transform.position = new Vector3(0, -4.05f, -9);
                 player1.transform.position = spawnPositions[4, 0];
                 player2.transform.position = spawnPositions[4, 1];
                 break;
@@ -88,21 +89,24 @@ public class MatchManagerScript : NetworkBehaviour
     }
     public void PlayerWithAdvantageChanged(int previous, int current)
     {
-        Debug.Log("Player With Advantage: " + current);
+        
         if(current == 0)
         {
+            Debug.Log("Player With Advantage: Rojo" );
             GoAheadBlue.SetActive(false);
             GoAheadRed.SetActive(true);
             DoorLeft.SetActive(false);
             DoorRight.SetActive(true);
         } else if (current == 1)
         {
+            Debug.Log("Player With Advantage: Azul");
             GoAheadRed.SetActive(false);
             GoAheadBlue.SetActive(true);
             DoorRight.SetActive(false);
             DoorLeft.SetActive(true);
         } else
         {
+            Debug.Log("Player With Advantage: -1");
             GoAheadRed.SetActive(false);
             GoAheadBlue.SetActive(false);
             DoorRight.SetActive(true);
@@ -120,5 +124,36 @@ public class MatchManagerScript : NetworkBehaviour
     public void ChangePlayerWithAdvantageServerRpc(int numPlayer)
     {
         PlayerWithAdvantage.Value = numPlayer;
+        
+
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestActivateWinnerUIServerRpc(int numPlayer)
+    {
+        ActivateWinnerUIClientRpc(numPlayer);
+        //DisconectClients();
+    }
+
+    [ClientRpc]
+    public void ActivateWinnerUIClientRpc(int numPlayer)
+    {
+        if (numPlayer == 1)
+        {
+            BlueWinnerUI.SetActive(true);
+        } else if(numPlayer == 2)
+        {
+            RedWinnerUI.SetActive(true);
+        }
+        NetworkManager.Singleton.Shutdown();
+        
+    }
+
+    public void DisconectClients()
+    {
+        NetworkManager.DisconnectClient(1);
+        NetworkManager.DisconnectClient(0);
+    }
+
+    
 }

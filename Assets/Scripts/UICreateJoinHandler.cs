@@ -16,22 +16,22 @@ public class UICreateJoinHandler : MonoBehaviour
         
     }
 
-    public void GoToMainMenu()
-    {
-        SceneManager.LoadScene("MainMenuScene", LoadSceneMode.Single);
-    }
+    //public void GoToMainMenu()
+    //{
+    //    SceneManager.LoadScene("MainMenuScene", LoadSceneMode.Single);
+    //}
 
 
-    public void CreateGameClicked()
-    {
-        ChoosePnl.SetActive(false);
-        CreatePnl.SetActive(true);
-        Debug.Log("Desactivado: ChoosePanel, Activado: CreatePanel");
-    }
-    public void JoinGameClicked()
-    {
-        ChoosePnl.SetActive(false);
-        JoinPnl.SetActive(true);
-        Debug.Log("Desactivado: ChoosePanel, Activado: JoinPanel");
-    }
+    //public void CreateGameClicked()
+    //{
+    //    ChoosePnl.SetActive(false);
+    //    CreatePnl.SetActive(true);
+    //    Debug.Log("Desactivado: ChoosePanel, Activado: CreatePanel");
+    //}
+    //public void JoinGameClicked()
+    //{
+    //    ChoosePnl.SetActive(false);
+    //    JoinPnl.SetActive(true);
+    //    Debug.Log("Desactivado: ChoosePanel, Activado: JoinPanel");
+    //}
 }

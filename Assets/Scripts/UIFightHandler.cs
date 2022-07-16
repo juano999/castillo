@@ -45,9 +45,9 @@ public class UIFightHandler : MonoBehaviour
 
         startClientButton?.onClick.AddListener(async () =>
        {
-           if (!string.IsNullOrEmpty(joinCodeInput.text))
+           if (!string.IsNullOrEmpty(joinCodeInput.text) && joinCodeInput.text.Length == 6)
            {
-               RelayManager.RelayJoinData data = await RelayManager.JoinRelayServerFromJoinCode(joinCodeInput.text);
+               RelayManager.RelayJoinData data = await RelayManager.JoinRelayServerFromJoinCode(joinCodeInput.text.ToUpper());
                NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData(data.IPv4Address, data.Port, data.AllocationIDBytes, data.Key, data.ConnectionData, data.HostConnectionData, true);
            }
            NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
@@ -153,5 +153,12 @@ public class UIFightHandler : MonoBehaviour
         response.Pending = false;
     }
 
+    public void GoToMainMenu()
+    {
+        //NetworkManager.Singleton.DisconnectClient()
+        SceneManager.LoadScene("MainMenuScene", LoadSceneMode.Single);
+    }
+
+    
 
 }

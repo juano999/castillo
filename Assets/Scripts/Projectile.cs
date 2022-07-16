@@ -11,7 +11,6 @@ public class Projectile : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         //rb2d.velocity = dir;
         rb2d.AddForce(dir);
-        Debug.Log("velocity: " + rb2d.velocity);
         Invoke(nameof(DestroyBall), 3);
     }
 
@@ -26,7 +25,7 @@ public class Projectile : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         PlayerMovement player = collision.gameObject.GetComponent<PlayerMovement>();
-        Debug.Log("player collision" + collision.gameObject.name);
+        Debug.Log("El proyectil chocó con: " + collision.gameObject.name);
         if (player != null)
         {
             player.Hit();
